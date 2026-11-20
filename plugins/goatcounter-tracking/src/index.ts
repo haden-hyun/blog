@@ -9,6 +9,10 @@ import type { QuartzTransformerPlugin } from "@quartz-community/types"
  * - `headMeta`로 검색엔진 소유 확인 `<meta>`도 같은 자리에 주입한다
  */
 
+// SPA 이동은 문서를 다시 로드하지 않아 count.js가 세지 못한다 — nav마다 직접 센다. 첫 nav는 count.js 자동 집계와 겹쳐 건너뛴다.
+// 주의: SPA가 head를 갈아 끼우지만 DOMParser로 만든 script는 재실행되지 않아 리스너는 첫 로드에 한 번만 붙는다.
+const NAV_COUNT = `let gcFirstNav=true;document.addEventListener("nav",()=>{if(gcFirstNav){gcFirstNav=false;return}window.goatcounter?.count?.({path:location.pathname})})`
+
 export interface GoatcounterTrackingOptions {
   /** GoatCounter site subdomain, e.g. "haejunhyun" for haejunhyun.goatcounter.com */
   site: string
@@ -39,6 +43,7 @@ const GoatcounterTracking: QuartzTransformerPlugin<Partial<GoatcounterTrackingOp
     externalResources() {
       return {
         additionalHead: [
+          h("script", { dangerouslySetInnerHTML: { __html: NAV_COUNT } }),
           h("script", {
             "data-goatcounter": `https://${opts.site}.goatcounter.com/count`,
             async: true,

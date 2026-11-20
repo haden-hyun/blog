@@ -13,16 +13,16 @@ import readersScript from "./scripts/specsReaders.inline.ts"
 import backlinkPaths from "./scripts/backlinkPaths.inline.ts"
 
 export interface NoteSpecsOptions {
-  labels: { created: string; revised: string; updated: string; runtime: string }
+  labels: { published: string; updated: string; runtime: string }
 }
 
 const defaultOptions: NoteSpecsOptions = {
-  labels: { created: "Created", revised: "Revised", updated: "Updated", runtime: "min read" },
+  labels: { published: "Published", updated: "Updated", runtime: "min read" },
 }
 
 /**
- * 제목 아래 메타 한 줄 — 날짜 · 읽는 시간 · 독자 수 · 개념 태그(폴더 미러 태그 제외).
- * 개정·수정은 앞선 날짜와 다를 때만 나온다(getNoteDates). 구분자 `·`는 CSS가 단다.
+ * 제목 아래 메타 한 줄 — 발행·개정일 · 읽는 시간 · 조회수 · 개념 태그(폴더 미러 태그 제외).
+ * Published = created, Updated = posted(다를 때만). 주의: modified는 사소한 수정에도 바뀌어 쓰지 않는다. 구분자 `·`는 CSS가 단다.
  */
 export default ((userOpts?: Partial<NoteSpecsOptions>) => {
   const opts = { labels: { ...defaultOptions.labels, ...userOpts?.labels } }
@@ -31,16 +31,15 @@ export default ((userOpts?: Partial<NoteSpecsOptions>) => {
     const slug = fileData.slug
     if (!slug || !isRealNote(slug)) return <></>
 
-    const { created, revised, updated } = getNoteDates(fileData)
+    const { created, revised } = getNoteDates(fileData)
     const minutes = readingMinutes(fileData.text as string | undefined)
     const tags = ((fileData.frontmatter?.tags ?? []) as string[]).filter((tag) => !isFolderMirrorTag(slug, tag))
 
     if (!created && !minutes && tags.length === 0) return <></>
 
     const dates: [string, Date | undefined][] = [
-      [opts.labels.created, created],
-      [opts.labels.revised, revised],
-      [opts.labels.updated, updated],
+      [opts.labels.published, created],
+      [opts.labels.updated, revised],
     ]
 
     return (

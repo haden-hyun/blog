@@ -213,7 +213,7 @@ body 스택 맨 앞의 Inter가 `unicode-range`로 라틴만 그리고, 한글�
 
 | 패널                             | 핵심                                                          |
 | -------------------------------- | ------------------------------------------------------------- |
-| SPECS (`plugins/note-specs`)     | 제목 아래 메타 한 줄(모든 폭): `Created … · Revised … · Updated … · N min read · N readers · #태그`(§4.11). Mono 0.75rem `--gray`, 태그만 `--secondary` 링크. 폴더 경로를 되풀이하는 태그(`isFolderMirrorTag`)는 뺀다. 독자 수는 `/api/stats`를 클라이언트가 채우고 자리(`min-width` 13ch)를 미리 잡아 뒤 항목이 밀리지 않으며, 실패하면 구분자째 숨는다. 구분자 `·`는 CSS가 다음 항목 앞에 단다 |
+| SPECS (`plugins/note-specs`)     | 제목 아래 메타 한 줄(모든 폭): `Published … · Updated … · N min read · N views · #태그`(§4.11). Mono 0.75rem `--gray`, 태그만 `--secondary` 링크. 폴더 경로를 되풀이하는 태그(`isFolderMirrorTag`)는 뺀다. 조회수는 `/api/stats`를 클라이언트가 채우고 자리(`min-width` 13ch)를 미리 잡아 뒤 항목이 밀리지 않으며, 실패하면 구분자째 숨는다. 구분자 `·`는 CSS가 다음 항목 앞에 단다 |
 | Backlinks                        | 글 끝(시리즈 페이저 뒤·댓글 앞, 모든 폭). 위 괘선 + 라벨 `Backlinks` + 개수(Mono `--gray`, CSS 카운터). 행 = 제목 링크(Hahmlet 0.875rem `--secondary`) + 폴더 경로(Mono 0.6875rem `--gray`, `note-specs`의 `backlinkPaths.inline.ts`가 단다). 2열 그리드, 모바일 1열. 백링크가 없으면 렌더하지 않는다 |
 | CATALOG (`plugins/note-catalog`) | 전체 파일 트리 폐기, **형제 노트 중 현재 ±2편 창**(최대 5행, 처음·끝에선 반대쪽으로 채움, 시리즈는 편 순). 창 밖이 있으면 `All N notes →`로 폴더 페이지(하위 전체 색인)에 보낸다. 높이가 고정이라 스크롤·하한 규칙이 없다 |
 | TOC                              | 라벨 "TOC". 데스크톱 island 안에선 `0 0 auto` — **목록 안 스크롤 없음**. TOC만으로 island를 넘으면 현재 h2 절의 h3만 펼친다(§4.15) |
@@ -268,7 +268,7 @@ body 스택 맨 앞의 Inter가 `unicode-range`로 라틴만 그리고, 한글�
   - 묶음 라벨: 구성원 전원이 한 시리즈면 제목 = 시리즈 표시명, 부제 = `시리즈 · N편 — 1편 Docker의 기본 개념부터`(Topics 시리즈 행 어휘, 편 순 첫 편 — 서문 제목이 시리즈명과 같으면 다음 편). 아니면(섞인 묶음 포함) 제목 = 폴더 표시명 + `N notes`(부모가 토픽 루트가 아니면 `Python › Basics · 3 notes`), 부제 = 앞 2편 + `+N more`. 전원 개정이면 묶음에도 `Revised`.
   - Featured의 Recent 제외 집합과 Recent 표는 **같은 함수**(`plugins/_shared/notes.ts`의 `buildRecentRows`)로 만든다.
 - Topics: 토픽명 + 1단 폴더 표시명 부제(런타임, §4.6) + 점선 리더 + 노트 수 + 오른쪽 쉐브론(14px, `--gray`, hover `--secondary` — 하위로 들어가는 행의 이동 단서). 타일(같은 면·보더·그림자, 간격 10px), 줄무늬 없음, 행 최소 72px, 상태는 Featured와 같다. 데스크톱에서는 Recent와 같은 높이까지 행이 남는 높이를 나눠 갖는다(하단 오차 1px — 실측).
-- Archive: 연도 라벨(Mono 0.95rem 700 `--gray`) 아래 같은 레코드 행. 맨 위 `Popular · last 30 days` 섹션은 `/api/stats`(Pages Function, GoatCounter 프록시)의 `top`을 클라이언트가 채운다 — 빌드 데이터의 노트 슬러그 맵(제목·링크, `isListedNote`)으로 걸러 홈·태그·폴더·옛 URL을 버리고 상위 5편만, 행은 `순위 01(Mono) │ 제목 │ N readers`(GoatCounter는 방문자 수라 "views" 아님, 1이면 `1 reader`). 색은 연도 라벨·메타와 같은 `--gray`뿐. 섹션은 `hidden`으로 구워 JS 없음·API 실패·매칭 0편이면 제목째 안 보이고 자리도 없다. 600px 이하에선 순위 열이 좁아지고 수는 유지. SPA `nav`마다 다시 채우고 `addCleanup`으로 fetch를 중단한다.
+- Archive: 연도 라벨(Mono 0.95rem 700 `--gray`) 아래 같은 레코드 행. 맨 위 `Popular · last 30 days` 섹션은 `/api/stats`(Pages Function, GoatCounter 프록시)의 `top`을 클라이언트가 채운다 — 빌드 데이터의 노트 슬러그 맵(제목·링크, `isListedNote`)으로 걸러 홈·태그·폴더·옛 URL을 버리고 상위 5편만, 행은 `순위 01(Mono) │ 제목 │ N views`(GoatCounter 집계는 고유 방문자가 아니라 경로×8시간 세션 방문이라 "readers"가 아니다, 1이면 `1 view`). 색은 연도 라벨·메타와 같은 `--gray`뿐. 섹션은 `hidden`으로 구워 JS 없음·API 실패·매칭 0편이면 제목째 안 보이고 자리도 없다. 600px 이하에선 순위 열이 좁아지고 수는 유지. SPA `nav`마다 다시 채우고 `addCleanup`으로 fetch를 중단한다.
 - 기각: `Notes` 탭(최신 노트 1편 바로가기 — 목적지가 아니고, 노트 위에선 링크 없는 span이 모든 노트에서 켜졌다. 전체 목록은 Archive가 맡는다). Archive → Notes 개명도 기각(히어로 `+N ARCHIVE`·홈 `Archive →`와 라벨이 갈라진다).
 - 댓글(giscus)은 노트에만. topics·archive·폴더·태그 가상 페이지는 `byPageType`의 `exclude: comments`.
 - 푸터: `© 2026 Haejun Hyun` + Mono `BUILT WITH OBSIDIAN + QUARTZ`.
@@ -297,13 +297,14 @@ width: min(100% - var(--page-gutter) * 2, $pageMaxWidth); // 거터 2rem(모바�
 | --------- | ------------------------------------------------------------ | -------------------------------- |
 | 작성      | `dates.created` (frontmatter `created`)                      | 항상                             |
 | 개정      | frontmatter `posted` — 날짜 플러그인이 모르는 키라 직접 읽음 | 작성일과 다른 날일 때만 (`Revised`) |
-| 수정      | `dates.modified` (note-properties가 `updated`를 별칭 처리)   | 작성·개정일과 다른 날일 때만     |
+| 수정      | `dates.modified` (note-properties가 `updated`를 별칭 처리)   | 표시 안 함(tag 페이지 정렬에만)  |
 | 읽는 시간 | `readingMinutes(text)` — reading-time 이식, CJK 대응, 200wpm | 0분이 아닐 때                    |
 
+- SPECS 라벨은 Google 바이라인 날짜 권고를 따른다: 작성일 = `Published`(고정), 개정일 = `Updated`. 수정일(`modified`)은 오타 수정에도 바뀌어 SPECS에 내지 않는다. 다른 화면(Recent 칩·Archive)의 개정 표기는 `Revised` 그대로다.
 - 형식은 `YYYY-MM-DD`, KST 기준(`formatYmd`). 빌드 머신 시간대와 무관하다.
 - **목록 날짜 `getListDate` = `posted` → `created`** (Recent Notes · Featured · Notes 목적지 · 폴더 페이지 — 표시와 정렬 둘 다). Archive는 작성일로 묶고 개정일(`posted`)을 보조 표기한다.
 - **Prev/Next는 `created` 순**이다. 읽는 순서가 목적인데, `posted`는 개정 때 오늘로 덮어써져 개정한 글이 시리즈 맨 뒤로 밀리기 때문이다.
-- 주의: `updated`(note-properties가 `modified`로 매핑)는 작업마다 바뀌므로 정렬에 쓰지 않는다. `modified`는 SPECS `Updated`와 tag 페이지 정렬(`defaultDateType`)에만 남아 있다. folder 페이지는 `getListDate` 정렬 위에서 시리즈 편만 다시 모은다(§4.13).
+- 주의: `updated`(note-properties가 `modified`로 매핑)는 작업마다 바뀌므로 정렬에 쓰지 않는다. `modified`는 tag 페이지 정렬(`defaultDateType`)에만 남아 있다. folder 페이지는 `getListDate` 정렬 위에서 시리즈 편만 다시 모은다(§4.13).
 - 업스트림 content-meta·tag-list는 꺼 두었다 — 메타 줄이 모든 폭에서 대신한다.
 
 ### 4.12 모션
